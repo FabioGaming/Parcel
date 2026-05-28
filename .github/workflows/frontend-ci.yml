@@ -2,35 +2,8 @@ name: Frontend CI
 
 on:
   pull_request:
-    paths:
-      - "apps/frontend/**"
-      - ".github/workflows/frontend-ci.yml"
-
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Detect changes
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            frontend:
-              - "apps/frontend/**"
-
   frontend-cache:
-    needs: changes
-    if: ${{ github.base_ref == 'main' || needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -55,8 +28,7 @@ jobs:
         run: node --version
 
   frontend-build:
-    needs: [changes, frontend-cache]
-    if: ${{ github.base_ref == 'main' || needs.changes.outputs.frontend == 'true' }}
+    needs: frontend-cache
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -2,35 +2,8 @@ name: Backend CI
 
 on:
   pull_request:
-    paths:
-      - "apps/backend/**"
-      - ".github/workflows/backend-ci.yml"
-
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Detect changes
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            backend:
-              - "apps/backend/**"
-
   backend-cache:
-    needs: changes
-    if: ${{ github.base_ref == 'main' || needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -54,8 +27,7 @@ jobs:
         run: ./gradlew --no-daemon tasks
 
   backend-tests:
-    needs: [changes, backend-cache]
-    if: ${{ github.base_ref == 'main' || needs.changes.outputs.backend == 'true' }}
+    needs: backend-cache
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -79,8 +51,7 @@ jobs:
         run: ./gradlew --no-daemon test
 
   backend-build:
-    needs: [changes, backend-cache]
-    if: ${{ github.base_ref == 'main' || needs.changes.outputs.backend == 'true' }}
+    needs: backend-cache
     runs-on: ubuntu-latest
     defaults:
       run:
