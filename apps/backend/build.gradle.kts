@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
+val awsSdkVersion = "2.31.0"
+
 group = "net.fabidev"
 version = "0.0.1-SNAPSHOT"
 description = "ParcelServer"
@@ -31,13 +33,13 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.redisson:redisson-spring-boot-starter")
 
-    implementation(platform("software.amazon.awssdk:bom"))
+    implementation(platform("software.amazon.awssdk:bom:$awsSdkVersion"))
     implementation("software.amazon.awssdk:s3")
 
     implementation("org.flywaydb:flyway-core")
