@@ -6,6 +6,10 @@ on:
       - "apps/backend/**"
       - ".github/workflows/backend-ci.yml"
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   changes:
     runs-on: ubuntu-latest
