@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: parcel-postgres
+
+    environment:
+      POSTGRES_DB: parcel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
