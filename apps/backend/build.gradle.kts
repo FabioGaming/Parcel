@@ -26,6 +26,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    //testImplementation("org.testcontainers:junit-jupiter")
+    //testImplementation("org.testcontainers:postgresql")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -33,7 +35,6 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
 
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
@@ -43,6 +44,7 @@ dependencies {
     implementation("software.amazon.awssdk:s3")
 
     implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
 
     implementation("org.springframework.security:spring-security-crypto")
 
