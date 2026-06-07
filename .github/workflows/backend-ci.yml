@@ -43,8 +43,8 @@ jobs:
         image: postgres:18
         env:
           POSTGRES_DB: parcel
-          POSTGRES_USER: parcel
-          POSTGRES_PASSWORD: parcel
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
         ports:
           - 5432:5432
         options: >-
