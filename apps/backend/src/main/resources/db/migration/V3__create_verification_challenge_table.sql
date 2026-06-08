@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS auth.verification_challenge (
     id UUID NOT NULL PRIMARY KEY,
-    account_id UUID,
+    account_id UUID NOT NULL,
     device_id UUID,
     recipient_email TEXT NOT NULL,
     code_hash TEXT NOT NULL,
