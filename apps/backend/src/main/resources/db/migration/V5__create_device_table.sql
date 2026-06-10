@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS auth.device (
     account_id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL,
     last_seen_at TIMESTAMP NOT NULL,
-    verified_at TIMESTAMP NOT NULL
+    verified_at TIMESTAMP
 );
