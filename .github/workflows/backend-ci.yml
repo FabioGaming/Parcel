@@ -104,4 +104,4 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Build
-        run: ./gradlew --no-daemon build
+        run: ./gradlew --no-daemon assemble
