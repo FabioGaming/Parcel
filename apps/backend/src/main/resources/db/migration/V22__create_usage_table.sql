@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS storage.usage (
+    id UUID NOT NULL PRIMARY KEY,
+    profile_id UUID NOT NULL UNIQUE,
+    used_bytes BIGINT NOT NULL DEFAULT 0,
+    file_count BIGINT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP NOT NULL
+);
