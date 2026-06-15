@@ -10,61 +10,64 @@ permissions:
   pull-requests: write
 
 jobs:
-  promote:
+  promotion:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Fetch branches
-        run: |
-          git fetch origin main dev
+        run: git fetch origin main dev
 
-      - name: Check for changes
+      - name: Check if dev has new commits
         id: diff
         run: |
           COUNT=$(git rev-list --count origin/main..origin/dev)
 
-          if [ "$COUNT" -eq "0" ]; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
+          if [ "$COUNT" -eq 0 ]; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build commit log
         if: steps.diff.outputs.has_changes == 'true'
-        id: log
         run: |
-          LOG=$(git log origin/main..origin/dev \
-            --pretty=format:"- %s (%h)" \
-            --reverse)
-
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          echo "$LOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "## Weekly Promotion: dev → main"
+            echo
+            echo "This is an automated promotion PR from \`dev\` into \`main\`."
+            echo
+            echo "## Changes since last promotion"
+            echo
+            git log origin/main..origin/dev --pretty=format:'- %s (%h)' --reverse
+            echo
+            echo "## Purpose"
+            echo
+            echo "- Promote integrated development work into stable branch"
+            echo "- CI must pass before merge"
+            echo "- No release/versioning is implied by this merge"
+          } > pr_body.md
 
       - name: Create PR via GitHub CLI
         if: steps.diff.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          EXISTING_PR_COUNT=$(gh pr list --base main --head dev --state open --json number --jq 'length')
+
+          if [ "$EXISTING_PR_COUNT" -gt 0 ]; then
+            echo "An open PR from dev to main already exists. Skipping."
+            exit 0
+          fi
+
           gh pr create \
             --base main \
             --head dev \
             --title "Weekly promotion: dev → main" \
-            --body "## Promotion PR
-
-This PR promotes changes from \`dev\` into \`main\`.
-
-## Commits
-${{ steps.log.outputs.log }}
-
-## Notes
-- CI must pass before merge
-- This is a scheduled promotion step, not a release
-" \
-            --label "promotion" \
-            --label "automated"
+            --body-file pr_body.md \
+            --label promotion \
+            --label automated
