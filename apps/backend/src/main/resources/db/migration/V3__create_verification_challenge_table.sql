@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS auth.verification_challenge (
     code_hash TEXT NOT NULL,
     purpose TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    modified_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
     consumed_at TIMESTAMP,
     metadata JSONB
 );
