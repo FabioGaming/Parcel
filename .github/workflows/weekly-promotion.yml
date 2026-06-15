@@ -2,8 +2,7 @@ name: Weekly Dev → Main Promotion PR
 
 on:
   schedule:
-    - cron: "0 9 * * 5" # Friday 09:00 UTC
-
+    - cron: "0 9 * * 5"
   workflow_dispatch:
 
 permissions:
@@ -11,11 +10,11 @@ permissions:
   pull-requests: write
 
 jobs:
-  promotion-pr:
+  promote:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -24,7 +23,7 @@ jobs:
         run: |
           git fetch origin main dev
 
-      - name: Check for differences
+      - name: Check for changes
         id: diff
         run: |
           COUNT=$(git rev-list --count origin/main..origin/dev)
@@ -35,40 +34,37 @@ jobs:
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Stop if no changes
-        if: steps.diff.outputs.has_changes == 'false'
-        run: echo "No changes in dev → skipping promotion PR."
-
-      - name: Build commit list
+      - name: Build commit log
         if: steps.diff.outputs.has_changes == 'true'
-        id: commits
+        id: log
         run: |
           LOG=$(git log origin/main..origin/dev \
-            --pretty=format:"- %s (`%h`)" \
+            --pretty=format:"- %s (%h)" \
             --reverse)
 
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$LOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create Promotion PR
+      - name: Create PR via GitHub CLI
         if: steps.diff.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          base: main
-          branch: dev
-          title: "Weekly promotion: dev → main"
-          body: |
-            This is an automated **promotion PR** from `dev` into `main`.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head dev \
+            --title "Weekly promotion: dev → main" \
+            --body "## Promotion PR
 
-            ## Changes since last promotion
+This PR promotes changes from \`dev\` into \`main\`.
 
-            ${{ steps.commits.outputs.log }}
+## Commits
+${{ steps.log.outputs.log }}
 
-            ## Purpose
-            - Promote integrated dev work into stable branch
-            - CI must pass before merge
-            - No release/versioning is implied by this merge
-          labels: |
-            promotion
-            automated
+## Notes
+- CI must pass before merge
+- This is a scheduled promotion step, not a release
+" \
+            --label "promotion" \
+            --label "automated"
