@@ -43,6 +43,9 @@ class Account(
     @Column(name = "account_role", nullable = false)
     var accountRole: AccountRole,
 
-    @OneToMany(mappedBy = "account_id", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var devices: MutableList<Device> = mutableListOf()
+    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    var devices: MutableList<Device> = mutableListOf(),
+
+    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    var refreshTokens: MutableList<RefreshToken> = mutableListOf()
 )
