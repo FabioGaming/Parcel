@@ -1,0 +1,74 @@
+name: Weekly Dev → Main Promotion PR
+
+on:
+  schedule:
+    - cron: "0 9 * * 5" # Friday 09:00 UTC
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  promotion-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch branches
+        run: |
+          git fetch origin main dev
+
+      - name: Check for differences
+        id: diff
+        run: |
+          COUNT=$(git rev-list --count origin/main..origin/dev)
+
+          if [ "$COUNT" -eq "0" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop if no changes
+        if: steps.diff.outputs.has_changes == 'false'
+        run: echo "No changes in dev → skipping promotion PR."
+
+      - name: Build commit list
+        if: steps.diff.outputs.has_changes == 'true'
+        id: commits
+        run: |
+          LOG=$(git log origin/main..origin/dev \
+            --pretty=format:"- %s (`%h`)" \
+            --reverse)
+
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$LOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Promotion PR
+        if: steps.diff.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: main
+          branch: dev
+          title: "Weekly promotion: dev → main"
+          body: |
+            This is an automated **promotion PR** from `dev` into `main`.
+
+            ## Changes since last promotion
+
+            ${{ steps.commits.outputs.log }}
+
+            ## Purpose
+            - Promote integrated dev work into stable branch
+            - CI must pass before merge
+            - No release/versioning is implied by this merge
+          labels: |
+            promotion
+            automated
