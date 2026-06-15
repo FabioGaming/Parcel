@@ -47,5 +47,8 @@ class Account(
     var devices: MutableList<Device> = mutableListOf(),
 
     @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
-    var refreshTokens: MutableList<RefreshToken> = mutableListOf()
+    var refreshTokens: MutableList<RefreshToken> = mutableListOf(),
+
+    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    var verificationChallenges: MutableList<VerificationChallenge> = mutableListOf()
 )
