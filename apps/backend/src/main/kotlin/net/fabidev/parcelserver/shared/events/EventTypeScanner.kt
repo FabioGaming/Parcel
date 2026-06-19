@@ -23,7 +23,7 @@ class EventTypeScanner(
         eventTypes.forEach { clazz ->
             resolver.register(clazz as Class<out DomainEvent>)
 
-            logger.info("Registered EventType: ${clazz.simpleName}")
+            logger.debug("Registered EventType: ${clazz.simpleName}")
         }
 
         logger.info("Registered ${eventTypes.count()} event types")
