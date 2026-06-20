@@ -1,4 +1,4 @@
-package net.fabidev.parcelserver.modules.auth.register
+package net.fabidev.parcelserver.modules.auth.routes.register
 
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

@@ -1,4 +1,4 @@
-package net.fabidev.parcelserver.modules.auth.register
+package net.fabidev.parcelserver.modules.auth.routes.register
 
 import net.fabidev.parcelserver.modules.auth.entity.Account
 
