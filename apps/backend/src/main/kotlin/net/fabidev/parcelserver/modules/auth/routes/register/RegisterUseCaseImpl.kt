@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class RegisterUseCaseImpl(private val passwordHasher: PasswordHasher, private val accountRepository: AccountRepository, private val eventPublisher: DomainEventPublisher) : RegisterUseCase {
 
-    override fun execute(email: String, password: String): RegisterResult {
+    override fun execute(email: String, password: String, deviceId: String): RegisterResult {
         if(this.accountRepository.existsAccountByEmail(email)) {
             return RegisterResult.Error.EmailAlreadyUsed;
         }
