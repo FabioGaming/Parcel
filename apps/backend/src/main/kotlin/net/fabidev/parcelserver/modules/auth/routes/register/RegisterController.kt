@@ -13,6 +13,5 @@ class RegisterController(val registerUseCase: RegisterUseCase) {
 
     @PostMapping
     fun register(@Valid @RequestBody body: RegisterRequest) {
-        
     }
 }
