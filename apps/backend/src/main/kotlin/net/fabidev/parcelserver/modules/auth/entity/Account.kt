@@ -38,7 +38,7 @@ class Account(
     var modifiedAt: Instant,
 
     @Column(name = "verified_at", nullable = true)
-    var verifiedAt: Instant,
+    var verifiedAt: Instant?,
 
     @Column(name = "account_role", nullable = false)
     var accountRole: AccountRole,
