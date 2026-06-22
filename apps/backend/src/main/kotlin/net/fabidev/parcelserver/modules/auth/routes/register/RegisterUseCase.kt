@@ -1,7 +1,7 @@
 package net.fabidev.parcelserver.modules.auth.routes.register
 
-import net.fabidev.parcelserver.modules.auth.entity.Account
+import net.fabidev.parcelserver.modules.auth.routes.register.dtos.RegisterRequest
 
 interface RegisterUseCase {
-    fun execute(email: String, password: String, deviceId: String): RegisterResult
+    fun execute(request: RegisterRequest, deviceId: String): RegisterResult
 }
